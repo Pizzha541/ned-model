@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ned</title>
+<style>
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:transparent}
+body{background:transparent}
+canvas{display:block;width:100%;height:100%;background:transparent;outline:none}
+</style>
+</head>
+<body>
+<script type="module">
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js';
+
+const GEO={"format_version":"1.12.0","minecraft:geometry":[{"description":{"identifier":"geometry.unknown","texture_width":64,"texture_height":64,"visible_bounds_width":2,"visible_bounds_height":2.5,"visible_bounds_offset":[0,0.75,0]},"bones":[{"name":"left_leg","pivot":[3,0,0],"cubes":[{"origin":[2,0,-3],"size":[2,1,4],"uv":[0,26]}]},{"name":"right_leg","pivot":[-3,0,0],"cubes":[{"origin":[-4,0,-3],"size":[2,1,4],"uv":[12,26]}]},{"name":"body","pivot":[0,6,0],"cubes":[{"origin":[-4,1,-2],"size":[8,10,4],"uv":[0,12]}]},{"name":"left_arm","parent":"body","pivot":[4,11,0],"cubes":[{"origin":[4,3,-2],"size":[1,8,4],"uv":[24,12]}]},{"name":"right_arm","parent":"body","pivot":[-4,11,0],"cubes":[{"origin":[-5,3,-2],"size":[1,8,4],"uv":[24,24]}]},{"name":"head","pivot":[0,11,0],"cubes":[{"origin":[-4,11,-3],"size":[8,6,6],"uv":[0,0]}]},{"name":"CejaDer","parent":"head","pivot":[3.2,16,-3],"cubes":[{"origin":[1,16,-3.3],"size":[2.3,0.5,1],"uv":[19,33]}]},{"name":"CejaIzq","parent":"head","pivot":[-3.2,16,-3],"cubes":[{"origin":[-3.3,16,-3.3],"size":[2.3,0.5,1],"uv":[19,33]}]},{"name":"Orejaizq","parent":"head","pivot":[4,14,-2],"cubes":[{"origin":[6,14,-2],"size":[1,1,1],"uv":[28,6]},{"origin":[4,13,-2],"size":[2,2,1],"uv":[28,0]}]},{"name":"OrejaDerecha","parent":"head","pivot":[-4,14,-2],"cubes":[{"origin":[-7,14,-2],"size":[1,1,1],"uv":[28,6]},{"origin":[-6,13,-2],"size":[2,2,1],"uv":[28,0]}]},{"name":"horn_static_1","pivot":[0,0,0],"cubes":[{"origin":[-3,17,-2],"size":[1,1,0],"uv":[29,11]}]},{"name":"horn_static_2","pivot":[0,0,0],"cubes":[{"origin":[2,17,-2],"size":[1,1,0],"uv":[1,32]}]}]}]};
+const ANIMS={"format_version":"1.8.0","animations":{"idle":{"loop":true,"animation_length":4.0,"bones":{"body":{"rotation":{"0.0":[0,0,0],"1.0":[0.5,-0.4,0.35],"2.0":[0,0,0],"3.0":[0.5,0.4,-0.35],"4.0":[0,0,0]}},"head":{"rotation":{"0.0":[0,0,0],"1.0":[-0.5,-2,-0.35],"2.0":[0.25,0,0],"3.0":[-0.5,2,0.35],"4.0":[0,0,0]}},"left_arm":{"rotation":{"0.0":[0,0,-10],"1.0":[1,-0.5,-9],"2.0":[0,0,-10],"3.0":[-1,0.5,-9],"4.0":[0,0,-10]}},"right_arm":{"rotation":{"0.0":[0,0,10],"1.0":[-1,0.5,9],"2.0":[0,0,10],"3.0":[1,-0.5,9],"4.0":[0,0,10]}},"Orejaizq":{"rotation":{"0.0":[0,0,-1.5],"1.8":[0,0,-1.5],"2.0":[0,0,-4],"2.2":[0,0,0],"2.5":[0,0,-1.5],"4.0":[0,0,-1.5]}},"OrejaDerecha":{"rotation":{"0.0":[0,0,1.5],"0.8":[0,0,1.5],"1.0":[0,0,4],"1.2":[0,0,0],"1.5":[0,0,1.5],"4.0":[0,0,1.5]}},"CejaDer":{"rotation":{"0.0":[0,0,0],"1.0":[0,0,-0.8],"2.0":[0,0,0],"3.0":[0,0,0.5],"4.0":[0,0,0]}},"CejaIzq":{"rotation":{"0.0":[0,0,0],"1.0":[0,0,0.8],"2.0":[0,0,0],"3.0":[0,0,-0.5],"4.0":[0,0,0]}}}},"crouch_idle":{"loop":true,"animation_length":3.2,"bones":{"body":{"rotation":{"0.0":[5,0,0],"0.8":[5.4,-0.4,0.25],"1.6":[5,0,0],"2.4":[5.4,0.4,-0.25],"3.2":[5,0,0]}},"head":{"rotation":{"0.0":[-3,0,0],"0.8":[-2.6,1,0.2],"1.6":[-3,0,0],"2.4":[-2.6,-1,-0.2],"3.2":[-3,0,0]}},"left_arm":{"rotation":{"0.0":[7,0,-11],"0.8":[7.8,-0.6,-10.5],"1.6":[7,0,-11],"2.4":[6.2,0.6,-10.5],"3.2":[7,0,-11]}},"right_arm":{"rotation":{"0.0":[7,0,11],"0.8":[6.2,-0.6,10.5],"1.6":[7,0,11],"2.4":[7.8,0.6,10.5],"3.2":[7,0,11]}},"left_leg":{"rotation":{"0.0":[3,0,-0.5],"1.6":[2.5,0,-0.5],"3.2":[3,0,-0.5]}},"right_leg":{"rotation":{"0.0":[3,0,0.5],"1.6":[2.5,0,0.5],"3.2":[3,0,0.5]}},"Orejaizq":{"rotation":{"0.0":[0,0,-3],"1.6":[0,0,-1],"3.2":[0,0,-3]}},"OrejaDerecha":{"rotation":{"0.0":[0,0,3],"1.6":[0,0,1],"3.2":[0,0,3]}},"CejaDer":{"rotation":{"0.0":[0,0,-2],"1.6":[0,0,-1],"3.2":[0,0,-2]}},"CejaIzq":{"rotation":{"0.0":[0,0,2],"1.6":[0,0,1],"3.2":[0,0,2]}}}},"walk":{"loop":true,"animation_length":1.0,"bones":{"body":{"rotation":{"0.0":[1.2,1,-0.8],"0.25":[0.8,0,0],"0.5":[1.2,-1,0.8],"0.75":[0.8,0,0],"1.0":[1.2,1,-0.8]}},"head":{"rotation":{"0.0":[-0.4,-0.8,0.45],"0.25":[0.3,0,0],"0.5":[-0.4,0.8,-0.45],"0.75":[0.3,0,0],"1.0":[-0.4,-0.8,0.45]}},"left_arm":{"rotation":{"0.0":[-15,-1,-11],"0.25":[0,0,-10],"0.5":[15,1,-9],"0.75":[0,0,-10],"1.0":[-15,-1,-11]}},"right_arm":{"rotation":{"0.0":[15,1,11],"0.25":[0,0,10],"0.5":[-15,-1,9],"0.75":[0,0,10],"1.0":[15,1,11]}},"left_leg":{"rotation":{"0.0":[9,0,0.5],"0.25":[0,0,0],"0.5":[-9,0,-0.5],"0.75":[0,0,0],"1.0":[9,0,0.5]}},"right_leg":{"rotation":{"0.0":[-9,0,-0.5],"0.25":[0,0,0],"0.5":[9,0,0.5],"0.75":[0,0,0],"1.0":[-9,0,-0.5]}},"Orejaizq":{"rotation":{"0.0":[0,0,-2],"0.25":[0,0,-4],"0.5":[0,0,-1],"0.75":[0,0,-3.5],"1.0":[0,0,-2]}},"OrejaDerecha":{"rotation":{"0.0":[0,0,2],"0.25":[0,0,4],"0.5":[0,0,1],"0.75":[0,0,3.5],"1.0":[0,0,2]}},"CejaDer":{"rotation":{"0.0":[0,0,-0.5],"0.5":[0,0,0.5],"1.0":[0,0,-0.5]}},"CejaIzq":{"rotation":{"0.0":[0,0,0.5],"0.5":[0,0,-0.5],"1.0":[0,0,0.5]}}}},"run":{"loop":true,"animation_length":1.0,"bones":{"body":{"rotation":{"0.0":[3.5,1.6,-1.3],"0.25":[4,0,0],"0.5":[3.5,-1.6,1.3],"0.75":[4,0,0],"1.0":[3.5,1.6,-1.3]}},"head":{"rotation":{"0.0":[-2,-1,0.7],"0.25":[-1.7,0,0],"0.5":[-2,1,-0.7],"0.75":[-1.7,0,0],"1.0":[-2,-1,0.7]}},"left_arm":{"rotation":{"0.0":[-23,-1.8,-12],"0.25":[0,0,-10.5],"0.5":[23,1.8,-9],"0.75":[0,0,-10.5],"1.0":[-23,-1.8,-12]}},"right_arm":{"rotation":{"0.0":[23,1.8,12],"0.25":[0,0,10.5],"0.5":[-23,-1.8,9],"0.75":[0,0,10.5],"1.0":[23,1.8,12]}},"left_leg":{"rotation":{"0.0":[14,0,0.7],"0.25":[0,0,0],"0.5":[-14,0,-0.7],"0.75":[0,0,0],"1.0":[14,0,0.7]}},"right_leg":{"rotation":{"0.0":[-14,0,-0.7],"0.25":[0,0,0],"0.5":[14,0,0.7],"0.75":[0,0,0],"1.0":[-14,0,-0.7]}},"Orejaizq":{"rotation":{"0.0":[0,0,-2],"0.25":[0,0,-4.5],"0.5":[0,0,0],"0.75":[0,0,-4],"1.0":[0,0,-2]}},"OrejaDerecha":{"rotation":{"0.0":[0,0,2],"0.25":[0,0,4.5],"0.5":[0,0,0],"0.75":[0,0,4],"1.0":[0,0,2]}},"CejaDer":{"rotation":{"0.0":[0,0,-1.5],"0.25":[0,0,-0.5],"0.5":[0,0,1],"0.75":[0,0,-0.5],"1.0":[0,0,-1.5]}},"CejaIzq":{"rotation":{"0.0":[0,0,1.5],"0.25":[0,0,0.5],"0.5":[0,0,-1],"0.75":[0,0,0.5],"1.0":[0,0,1.5]}}}},"fall":{"loop":true,"animation_length":1.6,"bones":{"body":{"rotation":{"0.0":[-2,0,0],"0.8":[-1.5,0,0],"1.6":[-2,0,0]}},"head":{"rotation":{"0.0":[3,0,0],"0.8":[2.5,0,0],"1.6":[3,0,0]}},"left_arm":{"rotation":{"0.0":[-4,0,-18],"0.8":[-2,0,-16],"1.6":[-4,0,-18]}},"right_arm":{"rotation":{"0.0":[-4,0,18],"0.8":[-2,0,16],"1.6":[-4,0,18]}},"left_leg":{"rotation":{"0.0":[4,0,2],"0.8":[2,0,1],"1.6":[4,0,2]}},"right_leg":{"rotation":{"0.0":[-4,0,-2],"0.8":[-2,0,-1],"1.6":[-4,0,-2]}},"CejaDer":{"rotation":{"0.0":[0,0,1],"0.8":[0,0,-1],"1.6":[0,0,1]}},"CejaIzq":{"rotation":{"0.0":[0,0,-1],"0.8":[0,0,1],"1.6":[0,0,-1]}}}},"torch_right":{"loop":true,"animation_length":2.8,"bones":{"right_arm":{"rotation":{"0.0":[96,-6,12],"1.4":[99,-5,11],"2.8":[96,-6,12]}}}},"torch_left":{"loop":true,"animation_length":2.8,"bones":{"left_arm":{"rotation":{"0.0":[96,6,-12],"1.4":[99,5,-11],"2.8":[96,6,-12]}}}},"attack_right":{"loop":false,"animation_length":0.46,"bones":{"right_arm":{"rotation":{"0.0":[8,-5,11],"0.12":[-18,-10,14],"0.25":[65,3,8],"0.36":[38,1,9],"0.46":[0,0,10]}},"body":{"rotation":{"0.0":[0,0,0],"0.14":[0,-3,0],"0.28":[1,4,-1],"0.46":[0,0,0]}}}},"attack_left":{"loop":false,"animation_length":0.46,"bones":{"left_arm":{"rotation":{"0.0":[8,5,-11],"0.12":[-18,10,-14],"0.25":[65,-3,-8],"0.36":[38,-1,-9],"0.46":[0,0,-10]}},"body":{"rotation":{"0.0":[0,0,0],"0.14":[0,3,0],"0.28":[1,-4,1],"0.46":[0,0,0]}}}}}};
+const textureURL='data:image/png;base64,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';
+const geometry=GEO['minecraft:geometry'][0];
+const W=geometry.description.texture_width, H=geometry.description.texture_height;
+const scene=new THREE.Scene();
+const modelRoot=new THREE.Group();
+scene.add(modelRoot);
+const camera=new THREE.PerspectiveCamera(32,innerWidth/innerHeight,.1,100);
+camera.position.set(0,8.5,-45);
+camera.lookAt(0,8.5,0);
+const renderer=new THREE.WebGLRenderer({alpha:true,antialias:true,premultipliedAlpha:false});
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+renderer.setSize(innerWidth,innerHeight);
+renderer.setClearColor(0x000000,0);
+renderer.outputColorSpace=THREE.SRGBColorSpace;
+document.body.appendChild(renderer.domElement);
+
+scene.add(new THREE.HemisphereLight(0xffffff,0x777777,2.0));
+const light=new THREE.DirectionalLight(0xffffff,2.0);
+light.position.set(-8,15,20);scene.add(light);
+
+const texture=new THREE.TextureLoader().load(textureURL);
+texture.colorSpace=THREE.SRGBColorSpace;
+texture.magFilter=THREE.NearestFilter;
+texture.minFilter=THREE.NearestFilter;
+texture.generateMipmaps=false;
+const material=new THREE.MeshBasicMaterial({map:texture,transparent:true,alphaTest:.01,side:THREE.DoubleSide});
+
+const boneDefs=geometry.bones;
+const bones={};
+for(const def of boneDefs) bones[def.name]=new THREE.Group();
+
+function faceUV(u,v,w,h,flipU=false){
+ const left=flipU ? (u+w)/W : u/W;
+ const right=flipU ? u/W : (u+w)/W;
+ const top=1-v/H;
+ const bottom=1-(v+h)/H;
+ return [[left,top],[right,top],[right,bottom],[left,bottom]];
+}
+function cubeGeometry(size,uv,flipU=false,swapFrontBack=false){
+ const [w,h,d]=size,[u,v]=uv;
+ // Bedrock box UV net: top, bottom, east, west, north, south.
+ const faces=[
+  {p:[[-w/2,h/2,-d/2],[w/2,h/2,-d/2],[w/2,h/2,d/2],[-w/2,h/2,d/2]],uv:[u+d,v,w,d]},
+  {p:[[-w/2,-h/2,d/2],[w/2,-h/2,d/2],[w/2,-h/2,-d/2],[-w/2,-h/2,-d/2]],uv:[u+d+w,v+d,w,d]},
+  {p:[[-w/2,-h/2,-d/2],[-w/2,-h/2,d/2],[-w/2,h/2,d/2],[-w/2,h/2,-d/2]],uv:[u,v+d,d,h]},
+  {p:[[w/2,-h/2,d/2],[w/2,-h/2,-d/2],[w/2,h/2,-d/2],[w/2,h/2,d/2]],uv:[u+d+w,v+d,d,h]},
+  {p:[[-w/2,-h/2,-d/2],[w/2,-h/2,-d/2],[w/2,h/2,-d/2],[-w/2,h/2,-d/2]],uv:[u+d,v+d,w,h]},
+  {p:[[w/2,-h/2,d/2],[-w/2,-h/2,d/2],[-w/2,h/2,d/2],[w/2,h/2,d/2]],uv:[u+2*d+w,v+d,w,h]}
+ ];
+ if(swapFrontBack){const tmp=faces[4].uv;faces[4].uv=faces[5].uv;faces[5].uv=tmp;}
+
+ const pos=[],uvs=[],idx=[];
+ for(const f of faces){
+  const base=pos.length/3;for(const p of f.p)pos.push(...p);
+  for(const q of faceUV(...f.uv,flipU))uvs.push(...q);
+  idx.push(base,base+1,base+2,base,base+2,base+3);
+ }
+ const g=new THREE.BufferGeometry();
+ g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));
+ g.setAttribute('uv',new THREE.Float32BufferAttribute(uvs,2));
+ g.setIndex(idx);g.computeVertexNormals();return g;
+}
+for(const def of boneDefs){
+ const group=bones[def.name];
+ const parent=def.parent?bones[def.parent]:null;
+ const parentDef=def.parent?boneDefs.find(b=>b.name===def.parent):null;
+ const parentPivot=parentDef?.pivot||[0,0,0];
+ group.position.set(def.pivot[0]-parentPivot[0],def.pivot[1]-parentPivot[1],def.pivot[2]-parentPivot[2]);
+ (parent||modelRoot).add(group);
+ if(def.rotation)group.rotation.set(...def.rotation.map(THREE.MathUtils.degToRad));
+ for(const cube of def.cubes||[]){
+  const mesh=new THREE.Mesh(cubeGeometry(cube.size,cube.uv,def.name==='head'||def.name==='body',def.name==='Orejaizq'||def.name==='OrejaDerecha'),material);
+  mesh.position.set(
+   cube.origin[0]+cube.size[0]/2-def.pivot[0],
+   cube.origin[1]+cube.size[1]/2-def.pivot[1],
+   cube.origin[2]+cube.size[2]/2-def.pivot[2]
+  );
+  group.add(mesh);
+ }
+}
+const idle=ANIMS.animations.idle;
+const baseRot={};
+for(const [name,b] of Object.entries(bones))baseRot[name]=b.rotation.clone();
+// Rotate only the head 180 degrees around Z.
+// Keep the torso untouched. The ears are child bones of the head,
+// so counter-transform their local pivots and rotations to keep them in place.
+baseRot.head.z += Math.PI;
+baseRot.body.z += Math.PI;
+baseRot.Orejaizq.x += Math.PI;
+baseRot.OrejaDerecha.x += Math.PI;
+// Bring both arms slightly inward around their shoulder pivots (Z axis).
+// The mirrored signs make the lower ends converge toward the body's center.
+baseRot.left_arm.z -= THREE.MathUtils.degToRad(10);
+baseRot.right_arm.z += THREE.MathUtils.degToRad(10);
+// Lift the entire head assembly slightly to separate it from the torso.
+bones.head.position.y += 6;
+// Fine adjustment: lower both arms a little more.
+bones.left_arm.position.y -= 1.35;
+bones.right_arm.position.y -= 1.35;
+// Keep the previous inward pose; no additional Z rotation.
+// Las orejas conservan sus rotaciones y pivotes originales.
+
+// Orientación inicial configurable desde el enlace:
+// ?x=0&y=90&z=0  (valores expresados en grados).
+const params=new URLSearchParams(location.search);
+const initialX=Number(params.get('x') ?? 0);
+const initialY=Number(params.get('y') ?? 0);
+const initialZ=Number(params.get('z') ?? 0);
+modelRoot.rotation.set(
+ THREE.MathUtils.degToRad(Number.isFinite(initialX)?initialX:0),
+ THREE.MathUtils.degToRad(Number.isFinite(initialY)?initialY:0),
+ THREE.MathUtils.degToRad(Number.isFinite(initialZ)?initialZ:0)
+);
+
+// Rotación interactiva: arrastra con mouse o dedo.
+let dragging=false, lastX=0, lastY=0;
+renderer.domElement.style.cursor='grab';
+renderer.domElement.style.touchAction='none';
+renderer.domElement.addEventListener('pointerdown',e=>{
+ dragging=true; lastX=e.clientX; lastY=e.clientY;
+ renderer.domElement.setPointerCapture(e.pointerId);
+ renderer.domElement.style.cursor='grabbing';
+});
+renderer.domElement.addEventListener('pointermove',e=>{
+ if(!dragging)return;
+ const dx=e.clientX-lastX, dy=e.clientY-lastY;
+ modelRoot.rotation.y += dx*0.01;
+ modelRoot.rotation.x += dy*0.01;
+ lastX=e.clientX; lastY=e.clientY;
+});
+function stopDragging(){
+ dragging=false;
+ renderer.domElement.style.cursor='grab';
+}
+renderer.domElement.addEventListener('pointerup',stopDragging);
+renderer.domElement.addEventListener('pointercancel',stopDragging);
+renderer.domElement.addEventListener('lostpointercapture',stopDragging);
+
+function easing(name,t){
+ if(name==='easeInOutQuad')return t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
+ if(name==='easeInElastic'){const c=2*Math.PI/3;return t===0?0:t===1?1:-Math.pow(2,10*t-10)*Math.sin((t*10-10.75)*c);}
+ return t;
+}
+function valueAt(channel,time){
+ const keys=Object.entries(channel).map(([t,val])=>[Number(t),val]).sort((a,b)=>a[0]-b[0]);
+ if(time<=keys[0][0])return Array.isArray(keys[0][1])?keys[0][1]:(keys[0][1].post?.vector||keys[0][1].vector);
+ for(let i=0;i<keys.length-1;i++){
+  const [t0,a]=keys[i],[t1,b]=keys[i+1];
+  if(time<=t1){
+   let p=(time-t0)/(t1-t0);
+   const va=Array.isArray(a)?a:(a.post?.vector||a.vector);
+   const vb=Array.isArray(b)?b:(b.pre?.vector||b.vector);
+   return va.map((v,j)=>v+(vb[j]-v)*p);
+  }
+ }
+ const last=keys[keys.length-1][1];
+ return Array.isArray(last)?last:(last.post?.vector||last.vector);
+}
+function animate(t){
+ for(const [name,channels] of Object.entries(idle.bones)){
+  const bone=bones[name];if(!bone)continue;
+  bone.rotation.copy(baseRot[name]);
+  if(channels.rotation){
+   let r=valueAt(channels.rotation,t);
+   // Gentle continuous head sway: no abrupt stop between turns.
+   if(name==='head'){
+    const phase=(t/8)*Math.PI*2;
+    r=[0, Math.sin(phase)*1.25, Math.sin(phase+Math.PI/2)*0.18];
+   }
+   // Restore the outward lower-arm spread without changing the shoulder position.
+   if(name==='left_arm'||name==='right_arm') r[2] *= -1;
+   bone.rotation.set(
+    baseRot[name].x+THREE.MathUtils.degToRad(r[0]),
+    baseRot[name].y+THREE.MathUtils.degToRad(r[1]),
+    baseRot[name].z+THREE.MathUtils.degToRad(r[2])
+   );
+  }
+ }
+}
+const duration=idle.animation_length||3;
+const start=performance.now();
+function render(now){
+ const t=((now-start)/1000)%duration;
+ animate(t);
+ renderer.render(scene,camera);
+ requestAnimationFrame(render);
+}
+requestAnimationFrame(render);
+addEventListener('resize',()=>{
+ camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();
+ renderer.setSize(innerWidth,innerHeight);
+});
+</script>
+</body>
+</html>
